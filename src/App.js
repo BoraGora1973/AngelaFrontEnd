@@ -12,7 +12,7 @@ function App() {
     //fetch("/api/hello")
     fetch(`${API_BASE}/api/hello`)
       .then((r) => r.json())
-      .then((d) => setMsg(d.message))
+      .then((d) => setMsg(d.message))   
       .catch(() => setMsg("שגיאה"));
   }, []);
 
