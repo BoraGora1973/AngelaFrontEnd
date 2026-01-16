@@ -1,25 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
 import { useEffect, useState } from "react";
-
+import "./App.css";
 
 function App() {
-
-  const API_BASE = process.env.REACT_APP_API_BASE;  
-  const [msg, setMsg] = useState("טוען...");
+  const [msg, setMsg] = useState("Loading...");
 
   useEffect(() => {
-    //fetch("/api/hello")
+    const API_BASE = process.env.REACT_APP_API_BASE;
+
     fetch(`${API_BASE}/api/hello`)
       .then((r) => r.json())
-      .then((d) => setMsg(d.message))   
-      .catch(() => setMsg("שגיאה"));
+      .then((d) => setMsg(d.message))
+      .catch(() => setMsg("Error contacting server"));
   }, []);
 
   return (
-    <div style={{ fontFamily: "system-ui", padding: 24 }}>
-      <h1>CRA Frontend</h1>
-      <p>השרת אומר: {msg}</p>
+    <div className="App">
+      <h1>Angela Frontend</h1>
+      <p>
+        Backend says: <b>{msg}</b>
+      </p>
     </div>
   );
 }
