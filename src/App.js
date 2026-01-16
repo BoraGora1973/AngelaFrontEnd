@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 function App() {
 
-  const API_BASE = process.env.REACT_APP_API_BASE;
+  const API_BASE = process.env.REACT_APP_API_BASE;  
   const [msg, setMsg] = useState("טוען...");
 
   useEffect(() => {
