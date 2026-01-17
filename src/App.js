@@ -2,60 +2,62 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
-  const [msg, setMsg] = useState("Loading V20 ...");
   const [images, setImages] = useState([]);
+  const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const uploadImage = async (file) => 
-  {
-    const form = new FormData();
+  // הגדרה נכונה של API_BASE
+  const API_BASE = process.env.REACT_APP_API_BASE;
+    
+  const loadImages = async () => {
+    setStatus("Loading gallery...");
 
-    form.append("image", file);
-
-    setBusy(true);
+    if (!API_BASE) return <div style={{ padding: 24 }}>Missing REACT_APP_API_BASE in Vercel</div>;
 
     try {
-      const res = await fetch(`${API_BASE}/api/upload`, {
-        method: "POST",
-        body: form
-      });
-
+      const res = await fetch(`${API_BASE}/api/images`);
       const data = await res.json();
-      if (!res.ok) 
-      {
-          throw new Error(data.error || "Upload failed");
-      }
-
-      setImages((prev) => [data, ...prev]);
-    } 
-    finally 
-    {
-      setBusy(false);
+      if (!res.ok) throw new Error(data.error || "Failed to load images");
+      setImages(data.images || []);
+      setStatus("");
+    } catch (e) {
+      setStatus("Failed to load gallery");
     }
   };
 
   useEffect(() => {
-    const API_BASE = process.env.REACT_APP_API_BASE;
-
-    if (!API_BASE) {
-        setMsg("Missing REACT_APP_API_BASE in Vercel env");
-        return;
-    }
-    
-    fetch(`${API_BASE}/api/hello`)
-      .then((r) => r.json())
-      .then((d) => setMsg(d.message))
-      .catch(() => setMsg("Error contacting server"));
+    loadImages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (!API_BASE) return <div style={{ padding: 24 }}>Missing REACT_APP_API_BASE in Vercel</div>;
+
+  const uploadImage = async (file) => {
+    const form = new FormData();
+    form.append("image", file);
+
+    setBusy(true);
+    setStatus("Uploading...");
+    try {
+      const res = await fetch(`${API_BASE}/api/upload`, {
+        method: "POST",
+        body: form,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+
+      setImages((prev) => [data, ...prev]);
+      setStatus("Uploaded ✅");
+      setTimeout(() => setStatus(""), 1200);
+    } catch (e) {
+      setStatus("Upload failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
-    <div className="App">
-      <div>
-        <h1>Angela Moldova Shop ...</h1>
-        <p>Message From Boris: <b>{msg}</b></p>
-      </div>
-      
-     <div style={{ padding: 24, fontFamily: "Arial" }}>
+    <div style={{ padding: 24, fontFamily: "Arial" }}>
       <h1>Angela Gallery</h1>
 
       <input
@@ -69,25 +71,35 @@ function App() {
         }}
       />
 
-      {busy && <p>Uploading...</p>}
+      <button style={{ marginLeft: 10 }} onClick={loadImages} disabled={busy}>
+        Refresh
+      </button>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-        gap: 12,
-        marginTop: 20
-      }}>
+      {status && <p>{status}</p>}
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+          gap: 12,
+          marginTop: 20,
+        }}
+      >
         {images.map((img) => (
           <div key={img.id} style={{ border: "1px solid #ddd", padding: 10 }}>
-            <img src={img.url} alt="" style={{ width: "100%", height: 160, objectFit: "cover" }} />
-            <a href={img.url} download style={{ display: "inline-block", marginTop: 8 }}>
-              Download V20 ...
-            </a>
+            <img
+              src={img.url}
+              alt=""
+              style={{ width: "100%", height: 180, objectFit: "cover" }}
+            />
+            <div style={{ marginTop: 8 }}>
+              <a href={img.url} download>
+                Download
+              </a>
+            </div>
           </div>
         ))}
-      </div>        
       </div>
-      
     </div>
   );
 }
