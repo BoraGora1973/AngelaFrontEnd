@@ -81,7 +81,7 @@ function App() {
           <div key={img.id} style={{ border: "1px solid #ddd", padding: 10 }}>
             <img src={img.url} alt="" style={{ width: "100%", height: 160, objectFit: "cover" }} />
             <a href={img.url} download style={{ display: "inline-block", marginTop: 8 }}>
-              Download
+              Download ...
             </a>
           </div>
         ))}
