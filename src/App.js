@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
-  const [msg, setMsg] = useState("Loading...");
+  const [msg, setMsg] = useState("Loading V20 ...");
   const [images, setImages] = useState([]);
   const [busy, setBusy] = useState(false);
 
@@ -81,7 +81,7 @@ function App() {
           <div key={img.id} style={{ border: "1px solid #ddd", padding: 10 }}>
             <img src={img.url} alt="" style={{ width: "100%", height: 160, objectFit: "cover" }} />
             <a href={img.url} download style={{ display: "inline-block", marginTop: 8 }}>
-              Download ...
+              Download V20 ...
             </a>
           </div>
         ))}
